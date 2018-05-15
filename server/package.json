@@ -1,0 +1,24 @@
+{
+  "name": "tronscan",
+  "version": "1.0.0",
+  "description": "tron block browser",
+  "author": "justin467",
+  "private": true,
+  "scripts": {
+  },
+  "devDependencies": {
+    "superagent":"^3.8.3",
+    "cheerio":"^1.0.0-rc.2",
+    "fs":"^0.0.1-security",
+    "node-schedule":"^1.3.0"
+  },
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}

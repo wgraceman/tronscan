@@ -1,0 +1,326 @@
+<template>
+  <div class="profile container " style="margin-top: 5px">
+    <br>
+    <div class="row">
+      <div class="col-md-6 hidden-xs loading" v-if="blockListData.length === 0 || !ajaxBlockListOK">
+        <loader></loader>
+      </div>
+    </div>
+    <!--block list-->
+    <div class="row block-list">
+      <block-list :blockListData="blockListData"></block-list>
+    </div>
+    <!--switch page-->
+    <ul class="pagination b-pagination pagination-md justify-content-center" v-show="blockListData.length > 0">
+      <li class="page-item">
+        <a class="page-link" :class="{'no-click': parseInt(active) === 1}" @click="prevPage">
+          <span aria-hidden="true">Prev Page</span>
+        </a>
+      </li>
+      <li class="page-item d-none d-sm-flex" v-show="parseInt(active) === 3">
+        <span class="page-link">…</span>
+      </li>
+      <li class="page-item"
+          v-for="(item, index) in pageItem"
+          v-show="(index !== 0 &&  parseInt(active) === 3) ||  parseInt(active) !== 3"
+          :key="item"
+          :class="{'active': parseInt(active) === parseInt(item)}"
+          @click="switchPage(item)"
+      >
+        <a class="page-link">{{item}}</a>
+      </li>
+      <li class="page-item d-none d-sm-flex">
+        <span class="page-link">…</span>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="#">
+          <span aria-hidden="true" @click="nextPage">Next Page</span>
+        </a>
+      </li>
+    </ul>
+    <br><br>
+  </div>
+</template>
+
+<script type="text/ecmascript-6">
+  import {mapActions, mapState} from 'vuex';
+  //  blocklist
+  import BlockList from 'compDom/BlockList/BlockList';
+  //  Loader
+  import Loader from 'compUI/Loader/Loader';
+
+  export default {
+    data () {
+      return {
+        /*
+         * block list data
+         * @type {Array}
+         * */
+        blockListData: [],
+        /*
+         * page
+         * @type {Array}
+         * */
+        page: 14,
+        /*
+         * ajax block data ok
+         * @type {Boolean}
+         * */
+        ajaxBlockListOK: false,
+        /*
+         * active page
+         * @type {Number}
+         * */
+        active: 1,
+        /*
+         * pageItem
+         * */
+        pageItem: ['1', '2', '3'],
+        oldClick: 1
+      }
+    },
+    created () {
+      // ajax block data
+      this.getBlocksAjax(this.page);
+    },
+    computed: {
+      ...mapState('blockchain', {
+        getBlocks: 'blocks'
+      })
+    },
+    methods: {
+      // nextPage
+      nextPage () {
+        if (this.page > 0) {
+          this.page = -14;
+        }
+
+        if (!this.ajaxBlockListOK) {
+          return;
+        }
+        this.ajaxBlockListOK = false;
+
+        if (this.page >= -14) {
+          this.page -= 14;
+        }
+
+        // ajax block list data
+        this.getBlocksAjax(this.page);
+      },
+      // prevPage
+      prevPage () {
+        if (parseInt(this.active) === 1) {
+          return;
+        }
+
+        // if ajax ok
+        if (!this.ajaxBlockListOK) {
+          return;
+        }
+        this.ajaxBlockListOK = false;
+
+        this.page += 14;
+
+        if (this.page === -14) {
+          this.page = Math.abs(this.page);
+        }
+
+        // ajax block list data
+        this.getBlocksAjax(this.page);
+      },
+      // switchPage 1,2,3
+      switchPage (item) {
+        this.active = item;
+
+        // click page = n * 14
+        let page;
+
+        if (this.oldClick !== parseInt(item)) {
+          this.oldClick = null;
+        }
+
+        if (!this.oldClick) {
+          if (!this.ajaxBlockListOK) {
+            return;
+          }
+          this.ajaxBlockListOK = false;
+
+          this.oldClick = parseInt(item);
+          page = -item * 14;
+
+          // ajax block list data
+          this.getBlocksAjax(page);
+        }
+
+      },
+      ...mapActions('blockchain', {
+        getBlocksAjax: 'getBlocks'
+      })
+    },
+    watch: {
+      getBlocks (blockList) {
+        //  set ajax block list data ok
+        this.ajaxBlockListOK = true;
+
+        this.blockListData = blockList;
+      }
+    },
+    components: {
+      BlockList,
+      Loader
+    }
+  }
+</script>
+
+<style scoped lang="scss">
+
+  .fa-pulse {
+    display: inline-block;
+  }
+
+  .page-txt {
+    padding: 2px 4px 4px 3px;
+    border: 1px solid #D4D4D4;
+    line-height: 30px;
+    background-color: #EAEAEA;
+    margin-top: 2px;
+    height: 2px;
+  }
+
+  .fa-pulse {
+    color: #192330;
+  }
+
+  .row {
+    position: relative;
+  }
+
+  .block-list {
+    box-shadow: 0 0 20px 0 #ececec;
+    min-height: 523px;
+    margin-bottom: 30px;
+  }
+
+  .loading {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding-top: 15%;
+    width: 100%;
+    min-height: 523px;
+    text-align: center;
+    z-index: 100;
+  }
+
+  .col-md-6 {
+    width: 100%;
+  }
+
+  .container {
+    min-height: 610px;
+  }
+
+  .pagination {
+    display: flex;
+    float: right;
+    margin-top: 10px;
+    margin-right: 20px;
+  }
+
+  @media (max-width: 1200px) {
+    .pagination {
+      margin: 10px auto 0;
+      float: none;
+      display: flex;
+      padding-left: 0;
+      list-style: none;
+      border-radius: .25rem;
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .pagination .page-item:first-child {
+    margin-right: 15px;
+  }
+
+  .pagination .page-item {
+    position: relative;
+    margin: 0 6px;
+    min-width: 14px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .pagination .page-item .page-link {
+
+  }
+
+  .page-item:first-child .page-link {
+    margin-left: 0;
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+  }
+
+  .pagination .page-item .page-link {
+    position: relative;
+    display: block;
+    margin-left: -1px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 20px;
+    color: #6f6f6f;
+    padding: 0;
+    border: none !important;
+    background: none !important;
+    cursor: pointer;
+  }
+
+  .no-click {
+    cursor: default !important;
+  }
+
+  .pagination .page-item {
+    position: relative;
+    margin: 0 6px;
+    min-width: 14px;
+    &.active:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 2.5px;
+      right: 0;
+      height: 2px;
+      background: #cd524c;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .container {
+      min-height: 523px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .container {
+      min-height: 523px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hidden-xs {
+      display: inherit !important;
+    }
+    .container {
+      min-height: 523px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      min-height: 523px;
+    }
+  }
+</style>
