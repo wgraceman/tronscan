@@ -4,14 +4,21 @@ import Router from 'vue-router'
 import Index from '@/pages/Index'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
-import Accounts from '@/pages/Accounts'
+
 
 import Nodes from '@/pages/network/Nodes'
 import Delegates from '@/pages/network/Delegates'
 
 // Blocks
-import BlockDetails from '@/pages/BlockDetails.vue'
+import BlockList from '@/pages/Block'
+import BlockDetails from '@/pages/BlockDetails/BlockDetails.vue'
+// Transactions
+import TransactionList from '@/pages/Transaction.vue'
+import TransactionDetails from '@/pages/TransactionDetails/TransactionDetails.vue'
 
+// Accounts
+import AddressList from '@/pages/Address'
+import AddressDetails from '@/pages/AddressDetails/AddressDetails'
 
 // tokens
 import Create from '@/pages/tokens/Create'
@@ -46,20 +53,19 @@ const router = new Router({
         breadcrumbs: []
       }
     },
-    // block
-    // {
-    //   path: '/blocks',
-    //   name: 'blocks',
-    //   component: Block,
-    //   meta: {
-    //     head: "Blocks",
-    //     breadcrumbs: [
-    //       { path: '/', name: 'home' },
-    //       { name: 'blocks' }
-    //     ]
-    //   }
-    // },
     // blocks list
+    {
+      path: '/blocks',
+      name: 'blocks',
+      component: BlockList,
+      meta: {
+        head: "Blocks",
+        breadcrumbs: [
+          { path: '/', name: 'home' },
+          { name: 'blocks' }
+        ]
+      }
+    },
     {
       path: '/blocks/:id',
       name: 'blockDetails',
@@ -70,6 +76,32 @@ const router = new Router({
           { path: '/', name: 'home' },
           // { path: '/blocks', name: 'blocks' },
           { name: 'blockDetail' }
+        ]
+      }
+    },
+    {
+      path: '/transactions',
+      name: 'transactions',
+      component: TransactionList,
+      meta: {
+        head: "Transactions",
+        breadcrumbs: [
+          { path: '/', name: 'home' },
+          { name: 'transactions' }
+        ]
+      }
+    },
+    // transations detail
+    {
+      path: '/transactions/:id',
+      name: 'transactionDetail',
+      component: TransactionDetails,
+      meta: {
+        head: "Transaction Detail",
+        breadcrumbs: [
+          { path: '/', name: 'home' },
+          // { path: '/blocks', name: 'blocks' },
+          { name: 'transactionDetail' }
         ]
       }
     },
@@ -99,14 +131,27 @@ const router = new Router({
       }
     },
     {
-      path: '/accounts',
-      name: 'accounts',
-      component: Accounts,
+      path: '/addresses',
+      name: 'addresses',
+      component: AddressList,
       meta: {
-        head: "Accounts",
+        head: "addresses",
         breadcrumbs: [
           { path: '/', name: 'home' },
-          { name: 'accounts' }
+          { name: 'addresses' }
+        ]
+      }
+    },
+    {
+      path: '/addresses/:id',
+      name: 'AddressDetails',
+      component: AddressDetails,
+      meta: {
+        head: "Address Detail",
+        breadcrumbs: [
+          { path: '/', name: 'home' },
+          // { path: '/blocks', name: 'blocks' },
+          { name: 'addressDetails' }
         ]
       }
     },
@@ -263,6 +308,20 @@ router.beforeEach((to, from, next) => {
         $('#nav-blocks').addClass('active')
       }, 100);
       $('#nav-blocks').addClass('active')
+      next();
+    }
+    if (/transactions/.test(to.path)) {
+      setTimeout(() => {
+        $('#nav-transactions').addClass('active')
+      }, 100);
+      $('#nav-transactions').addClass('active')
+      next();
+    }
+    if (/addresses/.test(to.path)) {
+      setTimeout(() => {
+        $('#nav-addresses').addClass('active')
+      }, 100);
+      $('#nav-addresses').addClass('active')
       next();
     }
 

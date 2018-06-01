@@ -1,6 +1,7 @@
-import HttpClient from "@tronprotocol/wallet-api/src/client/http";
+import TronClientHttp from "./tronClienthttp";
+import axios from 'axios'
 
+export const tronClient = new TronClientHttp({
+  url: `https://api.tronscan.org/api`
+})
 
-export const tronClient = new HttpClient({
-  // url: `https://tronscan.org`
-});

@@ -25,13 +25,13 @@
                     data-placement="bottom"
                     :data-original-title="new Date (item.time)"
                     class="timestampToTime"
-              >{{timestampToTime(item.time)}}</span>
+              >{{timestampToTime(item.timestamp)}}</span>
             </td>
             <td>
-              <a >{{item.witnessAddress}}</a>
+              <a class="page-go" @click="$router.push('/addresses/'+item.witnessAddress)">{{item.witnessAddress}}</a>
             </td>
             <td>{{item.size}}</td>
-            <td>{{item.transactionsCount}}</td>
+            <td>{{item.nrOfTrx}}</td>
             <!-- <td class="address-tag"><a>{{item.parentHash}}</a></td> -->
           </tr>
           </tbody>
@@ -127,6 +127,6 @@
   }
 
   .table-responsive{
-    box-shadow: 0 10px 6px -6px #bbb;
+    box-shadow: 0 0 20px 0 #ececec;
   }
 </style>

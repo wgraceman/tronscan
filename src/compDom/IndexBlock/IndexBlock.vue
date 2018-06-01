@@ -4,58 +4,47 @@
       <div class="panel-heading overflow-h">
         <h2 class="panel-title heading-sm pull-left">
           {{$t('indexBlock.name')}}</h2>
-        <!-- <router-link to="/blocks" class=" pull-right">{{$t('indexBlock.all')}} ></router-link> -->
       </div>
-      <!-- <div id="scrollbar2" class="panel-body no-padding mCustomScrollbar _mCS_1 mCS-autoHide" data-mcs-theme="minimal-dark" style="height: 180px; position: relative; overflow: visible;">
-        
-      </div> -->
       <div class="block-list">
-        <div class="loading" v-if="blockListData.length === 0">
-          <!--loading-->
-          <div align="center">
-            <img src="/static/loader.gif" alt="Showing">
-            <p>{{$t('base.loading')}}</p>
-          </div>
-        </div>
-        <block-list :blockListData="blockListData"></block-list>
+        <loader v-if="!blocks"></loader>
+        <block-list class="data-list" :blockListData="blocks.data"></block-list>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import BlockList from "compDom/BlockList/BlockList";
+import Loader from 'compUI/Loader/Loader';
 
 export default {
+  async created() {
+    // ajax block data
+    this.getBlocks(this.query);
+  },
   data() {
     return {
-      blockListData: []
+      query: {
+        sort: '-number',
+        limit: 15,
+        order: '-timestamp'
+      }
     };
   },
-  mounted() {
-    // ajax block data
-    this.getBlocksAjax(7);
-  },
   computed: {
-    ...mapState("blockchain", {
-      getBlocks: "blocks"
+    ...mapGetters({
+      blocks: "blockchain/allBlocks" 
     })
   },
   methods: {
-    ...mapActions("blockchain", {
-      getBlocksAjax: "getBlocks"
-    })
-  },
-  watch: {
-    getBlocks(blockList) {
-      //  set ajax block list data ok
-
-      this.blockListData = blockList;
-    }
+    ...mapActions("blockchain", [
+      "getBlocks"
+    ])
   },
   components: {
-    BlockList
+    BlockList,
+    Loader
   }
 };
 </script>

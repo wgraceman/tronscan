@@ -41,7 +41,7 @@
 
     <freeze></freeze>
     <request-test></request-test>
-    
+
   </div>
 </template>
 <script>
@@ -76,7 +76,14 @@ export default {
       this.loading = false;
     },
     numberWithCommas(val) {
-      return numberWithCommas(val)
+      let str = `${numberWithCommas(val)}`
+//      str = str.replace(/[?=\.0]/g, "")
+      if (str) {
+        return str
+      }
+      else {
+        return 0
+      }
     },
     ...mapActions(["refreshTokenBalances", "requestTestToken"])
   }

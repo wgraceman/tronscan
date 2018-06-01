@@ -12,7 +12,7 @@
             <h2 class="heading-md">
               {{$t('wallet.account.aoverview')}}</h2>
             <!-- <p>Below are the username, email and overview information for your account.</p> -->
-            
+
             <hr>
             <br>
             <dl class="dl-horizontal">
@@ -25,7 +25,7 @@
               <dd style="color: red">
                 {{$t('wallet.account.alert')}}
               </dd>
-              
+
             </dl>
           </div>
         </div>

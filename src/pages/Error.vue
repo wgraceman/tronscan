@@ -7,6 +7,7 @@
           <!-- <img src="/static/Plaster.png" width="100"> 
           <h1>Error</h1> -->
           <br><br>
+          <span v-html="computedmsg"></span>
           <span v-html="msg"></span>
           <br>
           <router-link class="btn-u btn-bordered" to="/" target="_parent" v-if="!showLoginButton">{{$t('error.back')}}</router-link>
@@ -23,22 +24,44 @@ export default {
     let msg = this.$route.query.msg;
     switch (msg) {
       case "login":
-        this.msg = this.$t('error.loginMsg');
+        this.msgType = 1;
         this.showLoginButton = true;
         break;
       case "BlockNumberTooLarge":
-        this.msg = this.$t('error.blockNumberMsg');
+        this.msgType = 2;
         break;
       default:
-        this.msg = this.$t('error.defaultMsg');
+        this.msg=msg
+        this.msgType = 3;
         break;
     }
   },
   data() {
     return {
       msg: "",
-      showLoginButton: false
+      msgType: 0,
+      showLoginButton: false,
     };
+  },
+  computed: {
+    computedmsg() {
+      switch (this.msgType) {
+        case 0:
+          return ""
+          break;
+        case 1:
+          return this.$t('error.loginMsg');
+          break;
+        case 2:
+          return this.$t('error.blockNumberMsg');
+          break;
+        case 3:
+          return this.$t('error.defaultMsg');
+          break;
+        default:
+          break;
+      }
+    }
   }
 };
 </script>

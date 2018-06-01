@@ -56,7 +56,7 @@ export default {
     }),
     filteredNodes() {
       return this.nodes.filter(node => {
-        return node.city !== "null";
+        return node.country !== "";
       });
     },
     joinedNodes() {
@@ -65,18 +65,35 @@ export default {
         if (!nodesByCountry[node.country]) {
           nodesByCountry[node.country] = {
             name: node.country,
-            nodes: [],
+            // nodes: [],
             total: 0
           };
         }
-        nodesByCountry[node.country].nodes.push(node);
-        nodesByCountry[node.country].total += node.count;
+        // nodesByCountry[node.country].nodes.push(node);
+        nodesByCountry[node.country].total += 1;
       }
-
       let countries = Object.values(nodesByCountry);
       countries = countries.sort((a, b) => a.total - b.total);
       countries.reverse();     
       return countries;
+    },
+    joinedNodesByCity() {
+      let nodesByCity = {};
+      for (let node of this.filteredNodes) {
+        if (!nodesByCity[node.city]) {
+          nodesByCity[node.city] = {
+            country: node.country,
+            city: node.city,
+            lng: node.lng,
+            lat: node.lat,
+            total: 0
+          };
+        }
+        // nodesByCountry[node.country].nodes.push(node);
+        nodesByCity[node.city].total += 1;
+      }
+      let citys = Object.values(nodesByCity); 
+      return citys;
     }
   },
   methods: {
@@ -85,16 +102,16 @@ export default {
     initMap() {
       let mapData = Highcharts.geojson(map);
 
-      let data = this.filteredNodes.map(node => {
-        let [x, y] = this.lonlatToXY(node.longitude, node.latitude);
+      let data = this.joinedNodesByCity.map(node => {
+        let [x, y] = this.lonlatToXY(node.lng, node.lat);
         return {
           x: x,
           y: y,
           city: node.city,
-          z: node.count,
+          z: node.total,
           country: node.country
         };
-      });
+      });      
       Highcharts.setOptions({
         chart: {
           style: {

@@ -1,113 +1,184 @@
 <template>
   <div class="vcontainer page page-wrapper">
     <transition name="fade">
-      <div class="vcontainer page" v-if="typeof(blockInformation.number) !== 'undefined'">
+      <div class="vcontainer page" v-if="typeof(currentTrans.hash) !== 'undefined'">
         <!--header-->
         <div class="header d-block d-lg-flex">
-          <span class="block">{{$t('blockDetail.height')}}</span>
-          <span class="height">{{blockInformation.number || '000000'}}</span>
+          <span class="block">{{$t('transDetail.title')}}</span>
           <span class="fork"></span>
           <span class="desc d-block d-lg-inline-block">
-            <span class="d-none d-lg-inline-block">{{$t('blockDetail.parenthash')}}</span> {{blockInformation.parentHash || null}}</span>
+            {{currentTrans.hash || null}}
+          </span>
         </div>
         <!--content-->
         <div class="main">
           <div class="baseinfo">
-            <div class="title font-info-title">{{$t('blockDetail.basic')}}</div>
+            <div class="title font-info-title">{{$t('transDetail.basic')}}</div>
             <div class="vshadow d-block d-lg-flex">
               <div class="left">
                 <ul class="vsection">
                   <!--Height-->
                   <li class="item">
-                    <span class="vcolor-192330 strong">{{$t('blockDetail.height')}}</span>
+                    <span class="vcolor-192330 strong">{{$t('transDetail.status')}}</span>
                     <div>
-                      <span class="vcolor-192330">{{blockInformation.number || null}}</span>
-                      <span class="vcolor-f6a623">{{$t('blockDetail.main')}}</span>
+                      <span class="vcolor-192330">{{currentTrans.confirmed ? $t('transDetail.confirm'):$t('transDetail.unconfirm')}}</span>
                     </div>
                   </li>
                   <!--time-->
                   <li class="item">
-                    <span class="vcolor-192330 strong">{{$t('blockDetail.age')}}</span>
-                    <span id="block-time" class="vcolor-192330">{{timestampToTime (blockInformation.time) || null}}</span>
-                  </li>
-                  <!--Tamaño-->
-                  <li class="item">
-                    <span class="vcolor-192330 strong">{{$t('blockDetail.size')}}</span>
-                    <span class="vcolor-192330">{{blockInformation.size > 1000 ? blockInformation.size / 1000 : blockInformation.size || null}} Bytes</span>
-                  </li>
-                  <!--Witness-->
-                  <li class="item">
-                    <span class="vcolor-192330 strong">{{$t('blockDetail.witness')}}</span>
-                    <span class="vcolor-192330">{{blockInformation.witnessAddress || null}}</span>
+                    <span class="vcolor-192330 strong">{{$t('transDetail.hash')}}</span>
+                    <span id="block-time" class="vcolor-192330" style="width: 75%;overflow: auto;">{{currentTrans.hash}}</span>
                   </li>
                 </ul>
               </div>
               <div class="right">
                 <!--nextpage-->
-                <div class="trace">
-                  <a class="item page-go" @click="prevPage(blockInformation.number - 1)">
-                    <i class="vicon i-block-near"></i>
-                    <p class="block-near">{{blockInformation.number - 1 || '00000'}}</p>
-                  </a>
-                  <i class="vicon icon-arrow-block"></i>
-                  <span class="item block-current-box">
-                    <i class="vicon i-block-current"></i>
-                    <p class="block-current">{{blockInformation.number || '00000'}}</p>
-                  </span>
-                  <i class="vicon icon-arrow-block"></i>
-                  <a class="item page-go" @click="nextPage(blockInformation.number + 1)">
-                    <i class="vicon i-block-near"></i>
-                    <p class="block-near">{{blockInformation.number + 1 || '00000'}}</p>
-                  </a>
-                </div>
+                <ul class="vsection">
+                  <!--Height-->
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.block')}}</span>
+                    <div>
+                      <span class="vcolor-192330">
+                        <a class="page-go" @click="$router.push('/blocks/'+currentTrans.block)"> {{currentTrans.block}}</a>
+                      </span>
+                    </div>
+                  </li>
+                  <!--time-->
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.time')}}</span>
+                    <span id="block-time" class="vcolor-192330">{{timestampToTime(currentTrans.timestamp)}}</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
         <!--list-->
         <div id="block-trade-detail" class="tradedetail">
-          <div class="top">
-            <span class="title">{{$t('blockDetail.transactions')}}</span>
-            <span>
-              <span class="txcount">{{blockInformation.transactionsCount}} {{$t('blockDetail.count')}}</span>
-              <!-- <span class="confirm">{{blockInformation.transactionsCount}}  {{$t('blockDetail.confirm')}}</span> -->
-            </span>
-          </div>
-          <ul class="middle">
-            <li class="item vshadow" v-for="(item,index) in blockInformation.transactions" :key="index">
-              <div class="tx-detail">
-                <div class="hash-section">
-                  <i class="vicon icon-hash d-none d-lg-inline-block"></i>
-                  <a class="hash font-hash-title">
-                    <span class="d-none d-lg-inline-block">{{blockInformation.witnessAddress}}</span>
-                  </a>
 
-                  <!--amount-->
-                  <span class="output font-coin-title">{{item.amount}} TRX</span>
-                </div>
-                <div class="address-section">
-                  <!--from-->
-                  <div class="address-box input">
-                    <div class="address-box-inner">
-                      <a class="coinbase hash font-hash-content">{{item.from}}</a>
+          <div class="baseinfo">
+            <div class="top">
+              <div class="title">{{$t('transDetail.contractInfo')}}</div>
+            </div>
+            <div class="vshadow d-block d-lg-flex" v-if="currentTrans.contractType === 1">
+              <div class="left">
+                <ul class="vsection">
+                  <!--Height-->
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.type')}}</span>
+                    <div>
+                      <span class="vcolor-192330">{{$t('transDetail.type1')}}</span>
                     </div>
-                  </div>
-                  <!--to-->
-                  <div class="address-box output">
-                    <div class="address-box-inner">
-                      <div class="address-row">
-                        <div class="address">
-                          <a class="hash font-hash-content">
-                            {{item.to}}
-                          </a>
-                        </div>
-                      </div>
+                  </li>
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.amount')}}</span>
+                    <div>
+                      <span class="vcolor-192330">{{numberWithCommas(currentTrans.contractData.amount/ 1000000)}}</span>
                     </div>
-                  </div>
-                </div>
+                  </li>
+                </ul>
               </div>
-            </li>
-          </ul>
+              <div class="right">
+                <!--nextpage-->
+                <ul class="vsection">
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.from')}}</span>
+                    <div>
+                      <span class="vcolor-192330">
+                        <a class="page-go" @click="$router.push('/addresses/'+currentTrans.contractData.from)">{{currentTrans.contractData.from}}</a>
+                      </span>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.to')}}</span>
+                    <span id="block-time" class="vcolor-192330">
+                      <a class="page-go" @click="$router.push('/addresses/'+currentTrans.contractData.to)">{{currentTrans.contractData.to}}</a>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="vshadow d-block d-lg-flex" v-if="currentTrans.contractType === 11">
+              <div class="left">
+                <ul class="vsection">
+                  <!--Height-->
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.type')}}</span>
+                    <div>
+                      <span class="vcolor-192330">{{$t('transDetail.type11')}}</span>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.freezeAmount')}}</span>
+                    <div>
+                      <span class="vcolor-192330">{{currentTrans.contractData.frozenBalance / 100000}}</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="right">
+                <!--nextpage-->
+                <ul class="vsection">
+                  <!--Height-->
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.address')}}</span>
+                    <div>
+                      <span class="vcolor-192330">
+                        <a class="page-go" @click="$router.push('/addresses/'+currentTrans.contractData.ownerAddress)">{{currentTrans.contractData.ownerAddress}}</a>
+                      </span>
+                    </div>
+                  </li>
+                  <!--time-->
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.freezeTime')}}</span>
+                    <span id="block-time" class="vcolor-192330">{{currentTrans.contractData.frozenDuration}}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="vshadow d-block d-lg-flex" v-if="currentTrans.contractType === 4">
+              <div class="left">
+                <ul class="vsection">
+                  <!--Height-->
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.type')}}</span>
+                    <div>
+                      <span class="vcolor-192330">{{$t('transDetail.type4')}}</span>
+                    </div>
+                  </li>
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.address')}}</span>
+                    <div>
+                      <span class="vcolor-192330">
+                        <a class="page-go" @click="$router.push('/addresses/'+currentTrans.contractData.ownerAddress)">{{currentTrans.contractData.ownerAddress}}</a>
+                      </span>
+                    </div>
+                  </li>
+                  <!--time-->
+                </ul>
+              </div>
+              <div class="right">
+                <ul class="vsection">
+                  <!--Height-->
+
+                  <li class="item">
+                    <span class="vcolor-192330 strong">{{$t('transDetail.voteInfo')}}</span>
+                    <div>
+                      <span class="vcolor-192330">{{$t('transDetail.voteHeader')}}</span>
+                    </div>
+                  </li>
+                  <li class="item" v-for="(vote, index) in currentTrans.contractData.votes" :key="index">
+                    <span class="vcolor-192330 strong"></span>
+                    <div>
+                      <span class="vcolor-192330">{{vote.voteAddress + " / " +vote.voteCount}}</span>
+                    </div>
+                  </li>
+                  <!--time-->
+                </ul>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
       <div class="vcontainer page pt-20" v-else>
@@ -119,7 +190,9 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapActions } from "vuex";
-import Loader from '../compUI/Loader/Loader';
+import Loader from "compUI/Loader/Loader";
+import commaNumber from "@/utils/mixins/commaNumber";
+
 export default {
   data() {
     return {
@@ -130,18 +203,16 @@ export default {
       ajaxBlockListOK: true
     };
   },
-  components: {
-    Loader
-  },
-  created() {
-    if (!this.blockInformation.number) {
-      this.getBlockByNumber(this.$route.params.id).catch(err => {
-        this.$router.push("/error?msg=" + err);
-      });
-    }
+  mixins: [commaNumber],
+  mounted() {
+    // if (!this.blockInformation.number) {
+    this.getTransactionByHash(this.$route.params.id).catch(err => {
+      this.$router.push("/error?msg=" + err);
+    });
+    // }
   },
   computed: {
-    ...mapGetters("blockchain", ["blockInformation"])
+    ...mapGetters("blockchain", ["currentTrans"])
   },
   methods: {
     // init time data
@@ -179,7 +250,9 @@ export default {
       this.ajaxBlockListOK = false;
 
       this.getBlockByNumber(number).catch(err => {
-        this.$router.push("/error?msg=" + err);
+        console.log(err);
+
+        // this.$router.push("/error?msg=" + err);
       });
     },
     ...mapActions("blockchain", {
@@ -187,16 +260,12 @@ export default {
         * getBlockByNumber
         * type {Object}
         * */
-      getBlockByNumber: "getBlockByNumber"
+      getBlockByNumber: "getBlockByNumber",
+      getTransactionByHash: "getTransactionByHash"
     })
   },
-  watch: {
-    blockInformation(data) {
-      //  set ajax block list data ok
-      console.log('aaa',typeof(data.number));
-      
-      this.ajaxBlockListOK = true;
-    }
+  components: {
+    Loader
   }
 };
 </script>
@@ -211,9 +280,9 @@ export default {
   opacity: 0;
 }
 
-.page-wrapper {
-  min-height: 100vh;
-}
+// .page-wrapper {
+//   min-height: 100vh;
+// }
 
 .vcontainer {
   margin-left: auto;
@@ -225,9 +294,9 @@ export default {
 
 .page {
   padding-top: 0;
-  padding-bottom: 135px;
+  padding-bottom: 35px;
 }
-.pt-20{
+.pt-20 {
   padding-top: 200px;
 }
 
@@ -272,18 +341,18 @@ export default {
   .title {
     margin-bottom: 10px;
   }
-  .left {
-    padding-left: 20px;
-    padding-right: 40px;
-  }
-  .right {
-    padding-left: 40px;
-    padding-right: 20px;
-  }
-  .left,
-  .right {
-    width: 50%;
-  }
+}
+.left {
+  padding-left: 20px;
+  padding-right: 40px;
+}
+.right {
+  padding-left: 40px;
+  padding-right: 20px;
+}
+.left,
+.right {
+  width: 50%;
 }
 
 .vsection {
@@ -361,13 +430,13 @@ export default {
     margin-bottom: 0;
   }
   .i-block-current {
-    background: url("../assets/img/nextImg.png");
+    background: url("../../assets/img/nextImg.png");
     background-size: cover;
     width: 40px;
     height: 40px;
   }
   .i-block-near {
-    background: url("../assets/img/nowImg.png");
+    background: url("../../assets/img/nowImg.png");
     background-size: cover;
     width: 30px;
     height: 30px;
@@ -402,6 +471,7 @@ export default {
   .title {
     font-size: 18px;
     color: #192330;
+    margin-bottom: 10px;
   }
   .txcount {
     font-size: 14px;
@@ -440,7 +510,7 @@ export default {
       color: #6f6f6f;
     }
     .icon-hash {
-      background-image: url("../assets/img/iconHash.png");
+      background-image: url("../../assets/img/iconHash.png");
       width: 28px;
       height: 28px;
       font-size: 0;
@@ -535,6 +605,11 @@ a:hover {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNzQiIGhlaWdodD0iNzQiIHZpZXdCb3g9IjAgMCA3NCA3NCI+PGRlZnM+PGNpcmNsZSBpZD0iYiIgY3g9IjE4IiBjeT0iMTgiIHI9IjE4Ii8+PGZpbHRlciBpZD0iYSIgd2lkdGg9IjI2Ni43JSIgaGVpZ2h0PSIyNjYuNyUiIHg9Ii04My4zJSIgeT0iLTgzLjMlIiBmaWx0ZXJVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giPjxmZU9mZnNldCBpbj0iU291cmNlQWxwaGEiIHJlc3VsdD0ic2hhZG93T2Zmc2V0T3V0ZXIxIi8+PGZlR2F1c3NpYW5CbHVyIGluPSJzaGFkb3dPZmZzZXRPdXRlcjEiIHJlc3VsdD0ic2hhZG93Qmx1ck91dGVyMSIgc3RkRGV2aWF0aW9uPSIxMCIvPjxmZUNvbG9yTWF0cml4IGluPSJzaGFkb3dCbHVyT3V0ZXIxIiB2YWx1ZXM9IjAgMCAwIDAgMC45MjQzNzI4NzQgMCAwIDAgMCAwLjkyNDM3Mjg3NCAwIDAgMCAwIDAuOTI0MzcyODc0IDAgMCAwIDEgMCIvPjwvZmlsdGVyPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE5IDE5KSI+PHVzZSBmaWxsPSIjMDAwIiBmaWx0ZXI9InVybCgjYSkiIHhsaW5rOmhyZWY9IiNiIi8+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYiIvPjwvZz48cGF0aCBmaWxsPSIjRkZCQzMyIiBkPSJNMzAuNyAyNy4xbDMuNiAxMC4yODUtMy42IDkuODEgMTUuNDY1LTEwLjA0OHoiLz48L2c+PC9zdmc+);
   background-size: 100% 100%;
   background-repeat: no-repeat;
+}
+
+.no-record {
+  padding: 30px;
+  text-align: center;
 }
 
 @media (min-width: 992px) {

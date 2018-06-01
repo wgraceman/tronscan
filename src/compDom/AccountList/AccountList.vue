@@ -2,22 +2,33 @@
   <div>
     <div class="block-list-wrapper">
       <div class="table-responsive">
-        <table class="table table-hover" v-show="nodeListData.length > 0">
+        <table class="table table-hover" v-show="blockListData.length > 0">
           <!--list-header-->
           <thead>
             <tr class="block-list-header">
-              <th>#</th>
-              <th>{{$t('nodes.region')}}</th>
-              <th>{{$t('nodes.nodes')}}</th>
+              <th>{{$t('accountList.name')}}</th>
+              <th>{{$t('accountList.address')}}</th>
+              <!-- <th>Supply</th> -->
+              <th>{{$t('accountList.balance')}}</th>
+
               <!-- <th>Parenthash</th> -->
             </tr>
           </thead>
           <!--list-content-->
           <tbody class="block-list-tbody">
-            <tr v-for="(item,index) in nodeListData" :key="index">
-              <td>{{index + 1}}</td>
-              <td>{{item.name}}</td>
-              <td>{{item.total}}</td>
+            <tr v-for="item in blockListData" :key="item.number">
+              <td >
+                <!-- <div style="width: 130px;text-overflow: ellipsis;overflow: hidden;"> -->
+                  {{item.name || 'N/A'}}
+                <!-- </div> -->
+
+              </td>
+              <td >
+                <a class="page-go" @click="$router.push('/addresses/'+item.address)">{{item.address}}</a>
+              </td>
+              <td>
+                {{numberWithCommas(item.balance / 1000000)}} TRX
+              </td>
               <!-- <td class="address-tag"><a>{{item.parentHash}}</a></td> -->
             </tr>
           </tbody>
@@ -29,6 +40,7 @@
 
 <script type="text/ecmascript-6">
 import { mapActions } from "vuex";
+import commaNumber from "@/utils/mixins/commaNumber";
 
 export default {
   props: {
@@ -36,13 +48,14 @@ export default {
        * block list data
        * @type {Array}
        * */
-    nodeListData: {
+    blockListData: {
       type: Array,
       default: function() {
         return [];
       }
     }
   },
+  mixins: [commaNumber],
   methods: {
     timestampToTime(timestamp) {
       let date = new Date(timestamp);
@@ -58,13 +71,13 @@ export default {
       return Y + M + D + h + m + s;
     },
     // go blockIF
-    goBlockIn(item) {
+    goBlockIn(blockNumber) {
       this.$router.push({
-        path: `/block/${item.number}`
+        path: `/blocks/${blockNumber}`
       });
 
       // get block If
-      this.getBlockInformation(item);
+      // this.getBlockInformation(item);
     },
     ...mapActions("blockchain", {
       /*

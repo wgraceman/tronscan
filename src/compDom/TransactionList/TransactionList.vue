@@ -2,22 +2,38 @@
   <div>
     <div class="block-list-wrapper">
       <div class="table-responsive">
-        <table class="table table-hover" v-show="nodeListData.length > 0">
+        <table class="table table-hover" v-show="transListData.length > 0">
           <!--list-header-->
           <thead>
             <tr class="block-list-header">
-              <th>#</th>
-              <th>{{$t('nodes.region')}}</th>
-              <th>{{$t('nodes.nodes')}}</th>
+              <th style="width: 130px;">{{$t('transList.hash')}}</th>
+              <th>{{$t('transList.block')}}</th>
+              <th>{{$t('transList.created')}}</th>
+              <!-- <th>{{$t('transList.from')}}</th> -->
+              <th>{{$t('transList.ownerAddress')}}</th>
+              <th>{{$t('transList.type')}}</th>
               <!-- <th>Parenthash</th> -->
             </tr>
           </thead>
           <!--list-content-->
           <tbody class="block-list-tbody">
-            <tr v-for="(item,index) in nodeListData" :key="index">
-              <td>{{index + 1}}</td>
-              <td>{{item.name}}</td>
-              <td>{{item.total}}</td>
+            <tr v-for="item in transListData" :key="item.hash">
+              <td>
+                <div style="width: 230px;text-overflow: ellipsis;overflow: hidden;">
+                  <a class="page-go" @click="goTrans(item.hash)">{{item.hash}}</a>
+                </div>
+              </td>
+              <td>
+                <a class="page-go" @click="goBlockIn(item.block)">{{item.block}}</a>
+              </td>
+              <td>
+                <span class="timestampToTime">{{timestampToTime(item.timestamp)}}</span>
+              </td>
+              <td>
+                <a class="page-go" @click="$router.push('/addresses/'+item.ownerAddress)">{{item.ownerAddress}}</a>
+              </td>
+              <!-- <td>{{item.contractData.to}}</td> -->
+              <td>{{parseTransType(item.contractType)}}</td>
               <!-- <td class="address-tag"><a>{{item.parentHash}}</a></td> -->
             </tr>
           </tbody>
@@ -36,7 +52,7 @@ export default {
        * block list data
        * @type {Array}
        * */
-    nodeListData: {
+    transListData: {
       type: Array,
       default: function() {
         return [];
@@ -44,6 +60,22 @@ export default {
     }
   },
   methods: {
+    parseTransType(type) {
+      switch (type) {
+        case 1:
+          return this.$t("transList.type1");
+          break;
+        case 11:
+          return this.$t("transList.type11");
+          break;
+        case 4:
+          return this.$t("transList.type4");
+          break;
+        default:
+          return this.$t("transList.typeDefault");
+          break;
+      }
+    },
     timestampToTime(timestamp) {
       let date = new Date(timestamp);
       let Y = date.getFullYear() + "-";
@@ -58,13 +90,18 @@ export default {
       return Y + M + D + h + m + s;
     },
     // go blockIF
-    goBlockIn(item) {
+    goBlockIn(blockNumber) {
       this.$router.push({
-        path: `/block/${item.number}`
+        path: `/blocks/${blockNumber}`
       });
 
       // get block If
       this.getBlockInformation(item);
+    },
+    goTrans(transHash) {
+      this.$router.push({
+        path: `/transactions/${transHash}`
+      });
     },
     ...mapActions("blockchain", {
       /*

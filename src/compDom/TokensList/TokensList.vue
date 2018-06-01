@@ -2,23 +2,31 @@
   <div>
     <div class="block-list-wrapper">
       <div class="table-responsive">
-        <table class="table table-hover" v-show="nodeListData.length > 0">
+        <table class="table table-hover" v-show="tokensListData.length > 0">
           <!--list-header-->
           <thead>
             <tr class="block-list-header">
-              <th>#</th>
-              <th>{{$t('nodes.region')}}</th>
-              <th>{{$t('nodes.nodes')}}</th>
-              <!-- <th>Parenthash</th> -->
+              <th>Name</th>
+              <th>Total Supply</th>
+              <th>Total issued</th>
+              <th>Registered</th>
             </tr>
           </thead>
           <!--list-content-->
           <tbody class="block-list-tbody">
-            <tr v-for="(item,index) in nodeListData" :key="index">
-              <td>{{index + 1}}</td>
-              <td>{{item.name}}</td>
-              <td>{{item.total}}</td>
-              <!-- <td class="address-tag"><a>{{item.parentHash}}</a></td> -->
+            <tr v-for="item in tokensListData" :key="item.number">
+              <td>
+                {{item.name}}
+              </td>
+              <td>
+                {{item.totalSupply}}
+              </td>
+              <td>
+                {{item.issued}}
+              </td>
+              <td>
+                {{timestampToTime(item.dateCreated)}}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -29,6 +37,7 @@
 
 <script type="text/ecmascript-6">
 import { mapActions } from "vuex";
+import commaNumber from "@/utils/mixins/commaNumber";
 
 export default {
   props: {
@@ -36,14 +45,31 @@ export default {
        * block list data
        * @type {Array}
        * */
-    nodeListData: {
+    tokensListData: {
       type: Array,
       default: function() {
         return [];
       }
     }
   },
+  mixins: ["commaNumber"],
   methods: {
+    parseTransType(type) {
+      switch (type) {
+        case 1:
+          return this.$t("transList.type1");
+          break;
+        case 11:
+          return this.$t("transList.type11");
+          break;
+        case 4:
+          return this.$t("transList.type4");
+          break;
+        default:
+          return this.$t("transList.typeDefault");
+          break;
+      }
+    },
     timestampToTime(timestamp) {
       let date = new Date(timestamp);
       let Y = date.getFullYear() + "-";
@@ -58,20 +84,20 @@ export default {
       return Y + M + D + h + m + s;
     },
     // go blockIF
-    goBlockIn(item) {
+    goBlockIn(blockNumber) {
       this.$router.push({
-        path: `/block/${item.number}`
+        path: `/blocks/${blockNumber}`
       });
 
       // get block If
       this.getBlockInformation(item);
     },
-    ...mapActions("blockchain", {
+    ...mapActions("tokens", {
       /*
         * get block If
         * @type {Object}
         * */
-      getBlockInformation: "blockInformation"
+      getAllTokens: "getAllTokens"
     })
   }
 };

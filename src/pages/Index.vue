@@ -44,15 +44,20 @@ export default {
     IndexTxs,
     IndexPie
   },
-  async created() {
-    this.initScrollBar();
+  async mounted() {
+    // this.initScrollBar();
     
     this.getLastBlock();
-    this.getAccounts();
+    this.getAllAccounts(this.query);
   },
   data() {
     return {
-      msg: "Welcome to Your Vue.js App"
+      msg: "Welcome to Your Vue.js App",
+      query: {
+        sort: '-balance',
+        limit: 15,
+        start: 0
+      }
     };
   },
   computed: mapGetters({
@@ -67,7 +72,7 @@ export default {
     ]),
     ...mapActions("blockchain", [
       "getLastBlock",
-      "getAccounts"
+      "getAllAccounts"
     ]),
     initScrollBar() {
       jQuery(".mCustomScrollbar").mCustomScrollbar({

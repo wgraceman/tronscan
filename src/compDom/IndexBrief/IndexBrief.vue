@@ -4,7 +4,7 @@
       <div class="col-lg-4 md-margin-bottom-20">
         <div class="service-block-v3 service-block-red border-1">
           <i class="fa fa-dollar" style="margin-right:16px"></i>
-          <span class="service-heading" rel="tooltip" data-placement="right" title="" data-original-title="View More">
+          <span class="service-heading">
             <font size="2" color="white">{{$t('indexBrief.price')}}</font>
           </span>
           <h4 style="margin-top:2px">
@@ -12,6 +12,7 @@
               <font color="white">
                 ${{numberWithCommas(priceUsd)}}
                 <font size="2">{{$t('indexBrief.usd')}}</font>
+                <!-- 跌#ffcc00   涨10d09d-->
                 <font :color="percentChangeColor" size="2"> (
                   {{percentChange+'%'}})</font>
               </font>
@@ -40,7 +41,7 @@
       <div class="col-lg-4 md-margin-bottom-20">
         <div class="service-block-v3 service-block-red border-3">
           <i class="fa fa-line-chart" style="margin-right:16px"></i>
-          <span class="service-heading" rel="tooltip" data-placement="right" title="" data-original-title="View More">
+          <span class="service-heading">
             <font size="2" color="white">{{$t('indexBrief.rank')}}</font>
           </span>
           <h4 style="margin-top:2px">
@@ -58,7 +59,7 @@
       <div class="col-md-4 md-margin-bottom-20">
         <div class="service-block-v3 service-block-red border-4">
           <i class="fa fa-cubes" style="margin-right:16px"></i>
-          <span class="service-heading" rel="tooltip" data-placement="right" title="" data-original-title="View More">
+          <span class="service-heading" >
             <font size="2" color="white">{{$t('indexBrief.height')}}</font>
           </span>
           <h4 style="margin-top:2px">
@@ -75,7 +76,7 @@
       <div class="col-md-4 md-margin-bottom-20">
         <div class="service-block-v3 service-block-red border-5">
           <i class="fa fa-users" style="margin-right:16px"></i>
-          <span class="service-heading" rel="tooltip" data-placement="right" title="" data-original-title="View More">
+          <span class="service-heading">
             <font size="2" color="white">{{$t('indexBrief.holders')}}</font>
           </span>
           <h4 style="margin-top:2px">
@@ -90,7 +91,7 @@
       <div class="col-md-4 md-margin-bottom-20">
         <div class="service-block-v3 service-block-red border-6">
           <i class="fa fa-globe" style="margin-right:16px"></i>
-          <span class="service-heading" rel="tooltip" data-placement="right" title="" data-original-title="View More">
+          <span class="service-heading" >
             <font size="2" color="white">{{$t('indexBrief.cap')}}</font>
           </span>
           <h4 style="margin-top:2px">
@@ -142,7 +143,7 @@ export default {
       return this.lastBlock.number ? this.lastBlock.number : "0"
     },
     accountsNumber() {
-      return this.accounts.length ? this.accounts.length : "0"
+      return this.accounts.total ? this.accounts.total : "0"
     }
   },
   methods: {

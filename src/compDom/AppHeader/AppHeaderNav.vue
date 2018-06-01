@@ -1,9 +1,12 @@
 <template>
   <div class="navbar-collapse mega-menu navbar-responsive-collapse collapse" aria-expanded="false">
     <div class="container">
+      <!--头部导航列表-->
       <ul class="nav navbar-nav">
         <router-link v-for="(nav,index) in navs" :key="index" class="nav-li" :class="{'dropdown': nav.children}" tag="li" :to="nav.path" :exact="(nav.id === 'home')" :id="'nav-'+nav.id">
+          <!--导航名称-->
           <a v-html="nav.name" aria-expanded="false" :data-toggle="(nav.children ? 'dropdown':'')"></a>
+          <!--子导航-->
           <ul class="dropdown-menu" v-if="nav.children">
             <template v-for="(children,index) in nav.children">
 
@@ -56,6 +59,21 @@ export default {
           id: 'home'
         },
         {
+          name: this.$t('nav.blocks'),
+          path: "/blocks",
+          id: 'blocks',
+        },
+        {
+          name: this.$t('nav.transactions'),
+          path: "/transactions",
+          id: 'transactions',
+        },
+        {
+          name: this.$t('nav.addresses'),
+          path: "/addresses",
+          id: 'addresses',
+        },
+        {
           name: this.$t('nav.network'),
           path: "#",
           id: 'network',
@@ -66,25 +84,21 @@ export default {
         },
         {
           name: this.$t('nav.token'),
-          path: "#",
+          path: "/tokensview",
           id: 'token',
-          children: [{ name: this.$t('nav.view'), path: "/tokensview" }, { name: this.$t('nav.create'), path: "/tokenscreate" }]
+          // children: [{ name: this.$t('nav.view'), path: "/tokensview" }, { name: this.$t('nav.create'), path: "/tokenscreate" }]
         },
-        {
-          name: this.$t('nav.accounts'),
-          path: "/accounts",
-          id: 'accounts',
-        },
+        
         // {
         //   name: this.$t('nav.blocks'),
         //   path: "/blocks",
         //   id: 'blocks',
         // },
-        {
-          name: this.$t('nav.wallet'),
-          path: "/wallet",
-          id: 'wallet',
-        }
+        // {
+        //   name: this.$t('nav.wallet'),
+        //   path: "/wallet",
+        //   id: 'wallet',
+        // }
       ]
     }
   },

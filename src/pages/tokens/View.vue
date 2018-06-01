@@ -1,78 +1,79 @@
 <template>
   <div class="profile container " style="margin-top: 5px">
-    <br>
-    <div class="row">
-      <div class="col-md-6 hidden-xs loading" v-show="tokensListData.length === 0">
-        <!--&lt;!&ndash;loading&ndash;&gt;-->
-        <!--<span>-->
-          <!--<i id="spinwheel" class="fa fa-spin fa-spinner fa-2x fa-pulse"></i>-->
-        <!--</span>-->
-        <!--<span>Showing Block ....</span>-->
-        <loader></loader>
-      </div>
-    </div>
     <!--block list-->
-    <div class="row block-list">
-      <tonkens-list :tokensListData="tokensListData"></tonkens-list>
+    <div class="row fix-tool">
+      <ul class="pagination">
+        <li v-if="currentPage > 1"><a href="javascript:void(0);" @click="goFirst">{{$t('base.pagination.first')}}</a></li>
+        <li v-if="currentPage > 1"><a href="javascript:void(0);" @click="prevPage">{{$t('base.pagination.pre')}}</a></li>
+        <li class="current-page">{{ currentPage }}/{{ totalPage }}</li>
+        <li v-if="currentPage < totalPage"><a href="javascript:void(0);" @click="nextPage">{{$t('base.pagination.next')}}</a></li>
+        <li v-if="currentPage < totalPage"><a href="javascript:void(0);" @click="goLast">{{$t('base.pagination.last')}}</a></li>
+      </ul>
     </div>
-    <br><br>
+    <div class="row block-list">
+      <loader v-if="!tokens.data"></loader>
+      <tokens-list :tokensListData="tokens.data" v-else></tokens-list>
+    </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import {mapActions, mapState,mapGetters} from 'vuex';
-  //  TonkensList
-  import TonkensList from 'compDom/TonkensList/TonkensList';
+  //  TokensList
+  import TokensList from 'compDom/TokensList/TokensList';
   //  Loader
   import Loader from 'compUI/Loader/Loader';
 
-  export default {
+export default {
     data () {
       return {
-        /*
-         * Tokens list data
-         * @type {Array}
-         * */
-        tokensListData: [],
-        /*
-         * iscomponent
-         * @type {String}
-         * */
-        component: 'TonkensList'
+        query: {
+          sort: '-name',
+          limit: 25,
+          start: 0
+        }
       }
     },
-    created () {
-      // ajax Tokens data
-      this.getAllTokens();
+    async created() {
+      this.getAllTokens(this.query);
     },
     computed: {
       ...mapGetters({
-        getPageRouter: 'pageRouter'
+        tokens: "tokens/allTokens" 
       }),
-      ...mapState('tokens', {
-        getTokens: 'tokens'
-      })
-    },
-    methods: {
-      ...mapActions('tokens', {
-        getAllTokens: 'getAllTokens'
-      })
-    },
-    watch: {
-      getTokens (tokensList) {
-        this.tokensListData = tokensList;
+      currentPage() {
+        return (this.query.start / this.query.limit) + 1;
       },
-      getPageRouter (router) {
-        if (router === 'create') {
-          this.component = 'TonkensCreate'
-        }
-        else {
-          this.component = 'TonkensList'
-        }
+      totalPage() {
+        return this.tokens.total ? Math.ceil(this.tokens.total / this.query.limit) : 0;
       }
     },
+    methods: {
+      //
+      goFirst() {
+        this.query.start = 0;
+        this.getAllTokens(this.query);
+      },
+      // nextPage
+      nextPage () {
+        this.query.start = ((this.query.start + this.query.limit) > this.tokens.total) ? this.query.start : (this.query.start + this.query.limit);
+        this.getAllTokens(this.query);
+      },
+      // prevPage
+      prevPage () {
+        this.query.start = (this.query.start - this.query.limit) < 0 ? 0 : (this.query.start - this.query.limit);
+        this.getAllTokens(this.query);
+      },
+      goLast() {
+        this.query.start = (this.totalPage - 1) * this.query.limit;
+        this.getAllTokens(this.query);
+      },
+      ...mapActions("tokens", [
+        "getAllTokens"
+      ])
+    },
     components: {
-      TonkensList,
+      TokensList,
       Loader
     }
   }
@@ -99,7 +100,6 @@
 
   .row {
     position: relative;
-    margin: 0;
   }
 
   .block-list {
@@ -200,7 +200,7 @@
       left: 2.5px;
       right: 0;
       height: 2px;
-      background-image: linear-gradient(270deg, #22e6b8, #00c1ce);
+      background: #cd524c;
     }
   }
 
@@ -218,7 +218,7 @@
 
   @media (max-width: 767px) {
     .hidden-xs {
-      display: inherit ;
+      display: inherit !important;
     }
     .container {
       min-height: 523px;

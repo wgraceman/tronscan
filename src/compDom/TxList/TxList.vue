@@ -10,6 +10,7 @@
             <th>From</th>
             <th>To</th>
             <th>Amount</th>
+            <!-- <th>Parenthash</th> -->
           </tr>
           </thead>
           <!--list-content-->
@@ -179,6 +180,6 @@
   }
 
   .table-responsive{
-    box-shadow: 0 10px 6px -6px #bbb;
+    box-shadow: 0 0 20px 0 #ececec;
   }
 </style>

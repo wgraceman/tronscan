@@ -123,7 +123,7 @@ export default {
     submit() {
       this.$router.push('/login')
       // this.setAccount(this.account).then(() => {
-        
+
       // })
     },
     ...mapActions([

@@ -16,13 +16,13 @@
                       <i class="fa fa-search" style="color: #fff"></i>
                     </button>
                   </span>
-                  <input type="text" class="form-control-custom ui-autocomplete-input input" placeholder="Search by Block" maxlength="80" v-model="param" />
-                  <span class="login-btn">
+                  <input type="text" class="form-control-custom ui-autocomplete-input input" placeholder="Search by Block/Transactions/Address" maxlength="80" v-model="param" />
+                  <!-- <span class="login-btn">
                     <button class="btn-u" @click.prevent="handleLogClick">
                       <i class="fa " :class="[loginStatus ? 'fa-sign-out' : 'fa-sign-in']" style="color: #fff"></i>
                       {{ loginStatus ? $t('nav.signOut') : $t('nav.login')}}
                     </button>
-                  </span>
+                  </span> -->
                 </div>
               </li>
             </ul>
@@ -67,17 +67,17 @@ export default {
   },
   methods: {
     async search() {
-      if (this.param) {
-        this.$router.push("/blocks/" + this.param);
-        this.getBlockByNumber(this.param)
-          .then(() => {
-            this.param = "";
-          })
-          .catch(err => {
-            this.$router.push("/error?msg=" + err);
-            this.param = "";
-          });
+      if(!this.param){
+        return
       }
+      if (this.param.length < 10) {
+        window.location = "/blocks/" + this.param;
+      }else if(this.param.length < 50){
+        window.location = "/addresses/" + this.param;
+      }else{
+        window.location = "/transactions/" + this.param;
+      }
+      this.param = ""
     },
     handleLogClick() {
       if (this.loginStatus) {
@@ -106,6 +106,7 @@ export default {
   margin-left: -6px;
   width: 210px;
 }
+/*搜索输入框*/
 .search-input {
   display: inline;
   .input {
@@ -113,6 +114,7 @@ export default {
     height: 31px;
   }
 }
+/*搜索按钮*/
 .search-btn,
 .login-btn {
   display: inline;

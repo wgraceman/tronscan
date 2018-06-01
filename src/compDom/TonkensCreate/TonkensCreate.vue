@@ -269,7 +269,7 @@
         }
       },
       num (data) {
-        console.log(data === '')
+        // console.log(data === '')
         if (data === '') {
           this.num = 0
         }
