@@ -2,17 +2,19 @@
   <div id="app">
     <app-header></app-header>
     <router-view/>
-    <app-footer v-if="!nofooter"></app-footer>
+    <app-footer></app-footer>
   </div>
 </template>
 
 <script>
 import AppHeader from "compDom/AppHeader/AppHeader.vue";
+import AppFooter from "compDom/AppFooter/AppFooter.vue";
 
 export default {
   name: "App",
   components: {
     AppHeader,
+    AppFooter
   },
   mounted() {
     $("[rel='tooltip']").tooltip();
