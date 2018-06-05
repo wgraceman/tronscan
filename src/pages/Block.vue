@@ -30,7 +30,8 @@
         query: {
           sort: '-number',
           limit: 50,
-          start: 0
+          start: 0,
+          count: true
         }
       }
     },
